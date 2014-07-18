@@ -52,6 +52,7 @@ func process() error {
 
 	var code bytes.Buffer
 	code.WriteString(`package main; import . "fmt"; import . "os"; import . "github.com/daviddengcn/gosl/builtin"; import . "strings"; `)
+	code.WriteString(`func init() {_ = Printf; _ = Exit; _ = Exec; _ = Contains; } `)
 
 	stage := STAGE_READY
 
@@ -109,9 +110,14 @@ func process() error {
 		if _, err := code.Write(buf); err != nil {
 			return err
 		}
-		if _, err := code.WriteString("\n}\n"); err != nil {
+	} else {
+		if _, err := code.WriteString("\nfunc main() { "); err != nil {
 			return err
 		}
+	}
+	
+	if _, err := code.WriteString("\n}\n"); err != nil {
+		return err
 	}
 
 	codeFn := genFilename(fn.Base())
