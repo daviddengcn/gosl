@@ -125,8 +125,19 @@ func process() error {
 		return err
 	}
 	defer codeFn.Remove()
+	
+	exeFn := codeFn + ".exe"
 
-	cmd := villa.Path("go").Command(append([]string{"run", codeFn.S()}, os.Args[2:]...)...)
+	cmd := villa.Path("go").Command("build", "-o", exeFn.S(), codeFn.S())
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	cmd.Stdin = os.Stdin
+	if err := cmd.Run(); err != nil {
+		return err
+	}
+	defer exeFn.Remove()
+	
+	cmd = exeFn.Command(os.Args[2:]...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin
