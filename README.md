@@ -44,10 +44,13 @@ The following packages are pre-imported with `.`, i.e. you can directly use the 
 
 Builtin Functions
 -----------------
-| Method | Description|
-+--------+------------------------------------
-| `Exec` | Execute an command with arguments |
-| `Bash` | Execute a bash line |
+
+Method | Description
+--------|------------------------------------
+`Exec` | Execute an command with arguments 
+`Bash` | Execute a bash line
+`S`    | Convert anything to a `string`
+`I`    | Convert anything to an `int`
 
 License
 --------
