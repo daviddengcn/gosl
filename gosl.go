@@ -7,8 +7,8 @@ import (
 	"math"
 	"math/rand"
 	"os"
-	"strings"
 	"os/exec"
+	"strings"
 	"syscall"
 
 	"github.com/daviddengcn/go-villa"
@@ -34,14 +34,23 @@ func genFilename(suffix villa.Path) villa.Path {
 	}
 }
 
-func execCode(err  error) int {
+func execCode(err error) int {
 	if exiterr, ok := err.(*exec.ExitError); ok {
 		if status, ok := exiterr.Sys().(syscall.WaitStatus); ok {
-            return status.ExitStatus()
-        }
+			return status.ExitStatus()
+		}
 	}
 	return 0
 }
+
+var (
+	DEFAULT_IMPORT = []string {
+		"fmt", "Printf",
+		"os", "Exit",
+		"strings", "Contains",
+		"github.com/daviddengcn/gosl/builtin", "Exec",
+	}
+)
 
 func process() error {
 	fn := villa.Path(os.Args[1])
@@ -51,8 +60,19 @@ func process() error {
 	}
 
 	var code bytes.Buffer
-	code.WriteString(`package main; import . "fmt"; import . "os"; import . "github.com/daviddengcn/gosl/builtin"; import . "strings"; `)
-	code.WriteString(`func init() {_ = Printf; _ = Exit; _ = Exec; _ = Contains; } `)
+	code.WriteString(`package main;`)
+	for i := 0; i < len(DEFAULT_IMPORT); i += 2 {
+		code.WriteString(` import . "`)
+		code.WriteString(DEFAULT_IMPORT[i])
+		code.WriteString(`";`)
+	}
+	code.WriteString(`func init() {`)
+	for i := 1; i < len(DEFAULT_IMPORT); i += 2 {
+		code.WriteString(` _ = `)
+		code.WriteString(DEFAULT_IMPORT[i])
+		code.WriteString(`;`)
+	}
+	code.WriteString(` } `)
 
 	stage := STAGE_READY
 
@@ -115,7 +135,7 @@ func process() error {
 			return err
 		}
 	}
-	
+
 	if _, err := code.WriteString("\n}\n"); err != nil {
 		return err
 	}
@@ -125,7 +145,7 @@ func process() error {
 		return err
 	}
 	defer codeFn.Remove()
-	
+
 	exeFn := codeFn + ".exe"
 
 	cmd := villa.Path("go").Command("build", "-o", exeFn.S(), codeFn.S())
@@ -136,7 +156,7 @@ func process() error {
 		return err
 	}
 	defer exeFn.Remove()
-	
+
 	cmd = exeFn.Command(os.Args[2:]...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
