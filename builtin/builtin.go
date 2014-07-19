@@ -6,7 +6,32 @@ import (
 	"os"
 	"os/exec"
 	"syscall"
+	"strconv"
 )
+
+func S(v interface{}) string {
+	return fmt.Sprint(v)
+}
+
+func I(v interface{}) int {
+	if i, ok := v.(int); ok {
+		return i
+	}
+	if i, ok := v.(int64); ok {
+		return int(i)
+	}
+	
+	i, _ := strconv.Atoi(S(v))
+	return i
+}
+
+func AtoiDef(a, def interface{}) int {
+	i, err := strconv.Atoi(S(a))
+	if err != nil {
+		i = I(def)
+	}
+	return i
+}
 
 func execCode(err  error) int {
 	if exiterr, ok := err.(*exec.ExitError); ok {
@@ -15,10 +40,6 @@ func execCode(err  error) int {
         }
 	}
 	return 0
-}
-
-func S(v interface{}) string {
-	return fmt.Sprint(v)
 }
 
 func Exec(exe interface{}, args ...string) (error, int) {

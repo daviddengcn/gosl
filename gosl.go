@@ -44,13 +44,26 @@ func execCode(err error) int {
 }
 
 var (
-	DEFAULT_IMPORT = []string {
+	DEFAULT_IMPORT = []string{
 		"fmt", "Printf",
 		"os", "Exit",
 		"strings", "Contains",
+		"math", "Abs",
+		"strconv", "Atoi",
 		"github.com/daviddengcn/gosl/builtin", "Exec",
 	}
 )
+
+func appendInitAndMainHead(code *bytes.Buffer) {
+	code.WriteString(`func init() {`)
+	for i := 1; i < len(DEFAULT_IMPORT); i += 2 {
+		code.WriteString(` _ = `)
+		code.WriteString(DEFAULT_IMPORT[i])
+		code.WriteString(`;`)
+	}
+	code.WriteString(` }; `)
+	code.WriteString("func main() { ")
+}
 
 func process() error {
 	fn := villa.Path(os.Args[1])
@@ -66,13 +79,6 @@ func process() error {
 		code.WriteString(DEFAULT_IMPORT[i])
 		code.WriteString(`";`)
 	}
-	code.WriteString(`func init() {`)
-	for i := 1; i < len(DEFAULT_IMPORT); i += 2 {
-		code.WriteString(` _ = `)
-		code.WriteString(DEFAULT_IMPORT[i])
-		code.WriteString(`;`)
-	}
-	code.WriteString(` } `)
 
 	stage := STAGE_READY
 
@@ -89,9 +95,7 @@ func process() error {
 		}
 
 		if len(line) == 0 {
-			if _, err := code.WriteRune('\n'); err != nil {
-				return err
-			}
+			code.WriteRune('\n')
 			continue
 		}
 
@@ -104,7 +108,8 @@ func process() error {
 				}
 				line = nil
 			case STAGE_IMPORT:
-				if !bytes.HasPrefix(line, []byte("import ")) {
+				trimmed := bytes.TrimSpace(line)
+				if len(trimmed) > 0 && !bytes.HasPrefix(trimmed, []byte("import ")) && !bytes.HasPrefix(trimmed, []byte("//")) {
 					stage = STAGE_MAIN
 				}
 			}
@@ -112,33 +117,21 @@ func process() error {
 		}
 
 		if stage == STAGE_MAIN {
-			if _, err := code.WriteString("func main() { "); err != nil {
-				return err
-			}
+			appendInitAndMainHead(&code)
 		}
-		if _, err := code.Write(line); err != nil {
-			return err
-		}
-		if _, err := code.WriteRune('\n'); err != nil {
-			return err
-		}
+		code.Write(line)
+		code.WriteRune('\n')
 		if stage == STAGE_MAIN {
 			break
 		}
 	}
 	if stage == STAGE_MAIN {
-		if _, err := code.Write(buf); err != nil {
-			return err
-		}
+		code.Write(buf)
 	} else {
-		if _, err := code.WriteString("\nfunc main() { "); err != nil {
-			return err
-		}
+		appendInitAndMainHead(&code)
 	}
 
-	if _, err := code.WriteString("\n}\n"); err != nil {
-		return err
-	}
+	code.WriteString("\n}\n")
 
 	codeFn := genFilename(fn.Base())
 	if err := codeFn.WriteFile(code.Bytes(), 0644); err != nil {
