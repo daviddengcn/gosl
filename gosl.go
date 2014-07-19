@@ -1,3 +1,8 @@
+/*
+This is an application that can make you write script with Go languages.
+
+It is NOT an interpreter but the pure Go. The preprocessor tranforms the script into a Go program, instantly compile and run. So it is almost same as the standard Go with the same efficiency.
+*/
 package main
 
 import (
@@ -15,9 +20,9 @@ import (
 )
 
 const (
-	STAGE_READY = iota
-	STAGE_IMPORT
-	STAGE_MAIN
+	STAGE_READY  = iota // start
+	STAGE_IMPORT        // import sentences
+	STAGE_MAIN          // main part
 )
 
 func genFilename(suffix villa.Path) villa.Path {
@@ -139,7 +144,7 @@ func process() error {
 	}
 	defer codeFn.Remove()
 
-	exeFn := codeFn + ".exe"
+	exeFn := codeFn + ".exe" // to be compatible with Windows
 
 	cmd := villa.Path("go").Command("build", "-o", exeFn.S(), codeFn.S())
 	cmd.Stdout = os.Stdout
@@ -169,5 +174,6 @@ func main() {
 
 	if err := process(); err != nil {
 		fmt.Printf("Failed: %v\n", err)
+		os.Exit(-1)
 	}
 }
