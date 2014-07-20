@@ -13,6 +13,7 @@ import (
 	"os"
 	"os/exec"
 	"strconv"
+	"strings"
 	"syscall"
 )
 
@@ -103,6 +104,15 @@ func ExecWithStdErrOut(exe interface{}, args ...string) (stdout, stderr string, 
 }
 
 /*
+Eval is similar to ExecWithStdout but with stdout captured and returned as a
+string. Trainling newlines are deleted.
+*/
+func Eval(exe interface{}, args ...string) string {
+	out, _, _ := ExecWithStdout(exe, args...)
+	return strings.TrimRight(out, "\r\n")
+}
+
+/*
 Bash runs a command with bash. Return values are defined in Exec.
 */
 func Bash(cmd interface{}) (error, int) {
@@ -115,4 +125,21 @@ string.
 */
 func BashWithStdout(cmd interface{}) (string, error, int) {
 	return ExecWithStdout("bash", "-c", S(cmd))
+}
+
+/*
+BashEval is similar to BashWithStdout but with stdout captured and returned
+as a string. Trainling newlines are deleted.
+*/
+func BashEval(cmd interface{}) string {
+	out, _, _ := BashWithStdout(cmd)
+	return strings.TrimRight(out, "\r\n")
+}
+
+/*
+Similar to os.Getwd() but no error returned.
+*/
+func Pwd() string {
+	pwd, _ := os.Getwd()
+	return pwd
 }
