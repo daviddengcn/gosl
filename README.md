@@ -28,6 +28,8 @@ Println(toJson(Split(files, "\n")))
     
 ```
 
+[Go Search](http://go-search.org/) is now operating with gosl. So you can find some simple example at its code base: https://github.com/daviddengcn/gcse/tree/master/scripts
+
 Installation and Usage
 ----------------------
 
