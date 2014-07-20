@@ -187,11 +187,11 @@ func MustSucc(err error, code int) {
 	if err == nil {
 		return
 	}
-	
+
 	if code != 0 {
 		Fatalf("Failed with error code: %d", code)
 	}
-	
+
 	Fatalf("Failed with error: %v", err)
 }
 
