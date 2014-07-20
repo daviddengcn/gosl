@@ -12,16 +12,18 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"sort"
 	"strconv"
 	"strings"
 	"syscall"
 )
 
 /*
-S converts anything into a string.
+S converts anything into a string. If args is specified, v is used as a format
+string.
 */
-func S(v interface{}) string {
-	return fmt.Sprint(v)
+func S(v interface{}, args ...interface{}) string {
+	return fmt.Sprintf(fmt.Sprint(v), args...)
 }
 
 /*
@@ -115,24 +117,24 @@ func Eval(exe interface{}, args ...string) string {
 /*
 Bash runs a command with bash. Return values are defined in Exec.
 */
-func Bash(cmd interface{}) (error, int) {
-	return Exec("bash", "-c", S(cmd))
+func Bash(cmd interface{}, args ...interface{}) (error, int) {
+	return Exec("bash", "-c", S(cmd, args...))
 }
 
 /*
 BashWithStdout is similar to Bash but with stdout captured and returned as a
 string.
 */
-func BashWithStdout(cmd interface{}) (string, error, int) {
-	return ExecWithStdout("bash", "-c", S(cmd))
+func BashWithStdout(cmd interface{}, args ...interface{}) (string, error, int) {
+	return ExecWithStdout("bash", "-c", S(cmd, args...))
 }
 
 /*
 BashEval is similar to BashWithStdout but with stdout captured and returned
 as a string. Trainling newlines are deleted.
 */
-func BashEval(cmd interface{}) string {
-	out, _, _ := BashWithStdout(cmd)
+func BashEval(cmd interface{}, args ...interface{}) string {
+	out, _, _ := BashWithStdout(cmd, args...)
 	return strings.TrimRight(out, "\r\n")
 }
 
@@ -142,4 +144,76 @@ Similar to os.Getwd() but no error returned.
 func Pwd() string {
 	pwd, _ := os.Getwd()
 	return pwd
+}
+
+/*
+DefExitCode is the default exit code.
+*/
+var DefExitCode = 1
+
+/*
+Fatalf print a message and exit the program with DefExitCode.
+*/
+func Fatalf(msg interface{}, args ...interface{}) {
+	fmt.Fprintln(os.Stderr, S(msg, args...))
+	os.Exit(DefExitCode)
+}
+
+/*
+Eprintf is similar to fmt.Printf but output is stderr.
+*/
+func Eprintf(format interface{}, args ...interface{}) {
+	fmt.Fprint(os.Stderr, S(format, args...))
+}
+
+/*
+Eprint is similar to fmt.Print but output is stderr.
+*/
+func Eprint(args ...interface{}) {
+	fmt.Fprint(os.Stderr, args...)
+}
+
+/*
+Eprintln is similar to fmt.Println but output is stderr.
+*/
+func Eprintln(args ...interface{}) {
+	fmt.Fprintln(os.Stderr, args...)
+}
+
+/*
+MustSucc checks the result of Exec/Bash. If not succeed, exit the application.
+*/
+func MustSucc(err error, code int) {
+	if err == nil {
+		return
+	}
+	
+	if code != 0 {
+		Fatalf("Failed with error code: %d", code)
+	}
+	
+	Fatalf("Failed with error: %v", err)
+}
+
+type sortI struct {
+	l    int
+	less func(int, int) bool
+	swap func(int, int)
+}
+
+func (s *sortI) Len() int {
+	return s.l
+}
+
+func (s *sortI) Less(i, j int) bool {
+	return s.less(i, j)
+}
+
+func (s *sortI) Swap(i, j int) {
+	s.swap(i, j)
+}
+
+// SortF sorts the data defined by the length, Less and Swap functions.
+func SortF(Len int, Less func(int, int) bool, Swap func(int, int)) {
+	sort.Sort(&sortI{l: Len, less: Less, swap: Swap})
 }

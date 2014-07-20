@@ -55,6 +55,7 @@ var (
 		"strings", "Contains",
 		"math", "Abs",
 		"strconv", "Atoi",
+		"time", "Sleep",
 		"github.com/daviddengcn/gosl/builtin", "Exec",
 	}
 )
