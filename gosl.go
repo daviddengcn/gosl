@@ -62,6 +62,7 @@ var (
 
 func appendInitAndMainHead(code *bytes.Buffer) {
 	code.WriteString(`func init() {`)
+	code.WriteString(` Args = Args[1:];`)
 	for i := 1; i < len(DEFAULT_IMPORT); i += 2 {
 		code.WriteString(` _ = `)
 		code.WriteString(DEFAULT_IMPORT[i])
@@ -156,7 +157,7 @@ func process() error {
 	}
 	defer exeFn.Remove()
 
-	cmd = exeFn.Command(os.Args[2:]...)
+	cmd = exeFn.Command(os.Args[1:]...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin
