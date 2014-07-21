@@ -60,14 +60,14 @@ chmod a+x example.go
 
 Or you can explictly call `gosl` to run it:
 ```bash
-gosl example.go  [params...]
+gosl example.go [params...]
 ```
 
 Pre-imported Packages
 ---------------------
 The following packages are pre-imported with `.`, i.e. you can directly use the methods exported by them. No complain of the compiler if you don't use them.
 
-`fmt`, `os`, `strings`, `strconv`, `math`, `github.com/daviddengcn/gosl/builtin`
+`fmt`, `os`, `strings`, `strconv`, `math`, `time`, and `github.com/daviddengcn/gosl/builtin`
 
 Frequently Used Builtin Functions
 ---------------------------------
