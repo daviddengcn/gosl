@@ -9,7 +9,7 @@ Benefit
 -------
 1. Pure Go language. No need to learn a new script language.
 1. Pre-imported packages and pre-defined functions make it easy to code.
-1. Seamless integration with the Go project. E.g. can easily load configuratio or data file from the Go project.
+1. Seamless integration with the Go project. E.g. can easily load configuration or data file from the Go project.
 1. Running efficiency same as Go, much faster than Python.
 
 Example
@@ -29,7 +29,7 @@ toJson := func(lines []string) string {
   return string(res)
 }
 
-files, _, _ := BashWithStdout("ls -l /tmp/")
+files := BashEval("ls -l %s", "/tmp/")
 
 Println(toJson(Split(files, "\n")))
     
