@@ -13,6 +13,7 @@ import (
 	"math/rand"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 	"syscall"
 
@@ -157,6 +158,9 @@ func process() error {
 	}
 	defer exeFn.Remove()
 
+	if p, err := filepath.Abs(os.Args[1]); err == nil {
+		os.Args[1] = p
+	}
 	cmd = exeFn.Command(os.Args[1:]...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr

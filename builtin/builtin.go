@@ -12,6 +12,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path"
 	"sort"
 	"strconv"
 	"strings"
@@ -213,7 +214,16 @@ func (s *sortI) Swap(i, j int) {
 	s.swap(i, j)
 }
 
-// SortF sorts the data defined by the length, Less and Swap functions.
+/*
+SortF sorts the data defined by the length, Less and Swap functions.
+*/
 func SortF(Len int, Less func(int, int) bool, Swap func(int, int)) {
 	sort.Sort(&sortI{l: Len, less: Less, swap: Swap})
+}
+
+/*
+ScriptDir returns the folder of the current script.
+*/
+func ScriptDir() string {
+	return path.Dir(os.Args[0])
 }
