@@ -48,7 +48,7 @@ go install github.com/daviddengcn/gosl
 
 #### Link to `/bin`
 ```bash
-sudo ln -s $GOPATH/bin/gosl /bin/ls
+sudo ln -s $GOPATH/bin/gosl /bin/gosl
 ```
 
 #### Run a script
