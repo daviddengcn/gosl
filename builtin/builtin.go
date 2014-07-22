@@ -182,6 +182,20 @@ func Eprintln(args ...interface{}) {
 }
 
 /*
+Eprintfln is similar to Eprintf but with a trailing new-line printed
+*/
+func Eprintfln(format interface{}, args ...interface{}) {
+	fmt.Fprintln(os.Stderr, S(format, args...))
+}
+
+/*
+Printfln is similar to Eprintf but with a trailing new-line printed
+*/
+func Printfln(format interface{}, args ...interface{}) {
+	fmt.Fprintln(S(format, args...))
+}
+
+/*
 MustSucc checks the result of Exec/Bash. If not succeed, exit the application.
 */
 func MustSucc(err error, code int) {
