@@ -231,16 +231,16 @@ func ScriptDir() string {
 /*
 Exists checks whether the path exists
 */
-func Exists(p interface{}) bool {
-	_, err := os.Stat(S(p))
+func Exists(p interface{}, args ...interface{}) bool {
+	_, err := os.Stat(S(p, args...))
 	return err == nil
 }
 
 /*
 IsDir returns true only if the path exists and indicates a directory
 */
-func IsDir(p interface{}) bool {
-	info, err := os.Stat(S(p))
+func IsDir(p interface{}, args ...interface{}) bool {
+	info, err := os.Stat(S(p, args...))
 	if err != nil {
 		// the path does not exist
 		return false
@@ -251,8 +251,8 @@ func IsDir(p interface{}) bool {
 /*
 IsFile returns true only if the path exists and indicates a file
 */
-func IsFile(p interface{}) bool {
-	info, err := os.Stat(S(p))
+func IsFile(p interface{}, args ...interface{}) bool {
+	info, err := os.Stat(S(p, args...))
 	if err != nil {
 		// the path does not exist
 		return false
