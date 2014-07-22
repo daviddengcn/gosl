@@ -192,7 +192,7 @@ func Eprintfln(format interface{}, args ...interface{}) {
 Printfln is similar to Eprintf but with a trailing new-line printed
 */
 func Printfln(format interface{}, args ...interface{}) {
-	fmt.Fprintln(S(format, args...))
+	fmt.Println(S(format, args...))
 }
 
 /*
