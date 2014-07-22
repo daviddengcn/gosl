@@ -227,3 +227,35 @@ ScriptDir returns the folder of the current script.
 func ScriptDir() string {
 	return path.Dir(os.Args[0])
 }
+
+/*
+Exists checks whether the path exists
+*/
+func Exists(p interface{}) bool {
+	_, err := os.Stat(S(p))
+	return err == nil
+}
+
+/*
+IsDir returns true only if the path exists and indicates a directory
+*/
+func IsDir(p interface{}) bool {
+	info, err := os.Stat(S(p))
+	if err != nil {
+		// the path does not exist
+		return false
+	}
+	return info.Mode().IsDir()
+}
+
+/*
+IsFile returns true only if the path exists and indicates a file
+*/
+func IsFile(p interface{}) bool {
+	info, err := os.Stat(S(p))
+	if err != nil {
+		// the path does not exist
+		return false
+	}
+	return !info.Mode().IsDir()
+}
