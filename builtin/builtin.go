@@ -60,10 +60,11 @@ func execCode(err error) int {
 Exec runs a command. exe is the path to the executable and args are arugment
 passed to it.
 
-If the command is executed successfuly without mistake, (nil, 0)
-will be returned. Otherwise, the error and error code will be returned.
+If the command is executed successfuly without mistakes, (nil, 0) will be
+returned. Otherwise, the error and error code will be returned.
+NOTE the error code could be 0 with a non-nil error.
 
-Stdout/stderr are directed the current stdout/stderr.
+Stdout/stderr are directed to the current stdout/stderr.
 */
 func Exec(exe interface{}, args ...string) (error, int) {
 	cmd := exec.Command(S(exe), args...)
@@ -131,8 +132,9 @@ func BashWithStdout(cmd interface{}, args ...interface{}) (string, error, int) {
 }
 
 /*
-BashEval is similar to BashWithStdout but with stdout captured and returned
-as a string. Trainling newlines are deleted.
+BashEval is similar to BashWithStdout but only returns captured stdout as a
+string. Trainling newlines are deleted. It's like the backtick substitution in
+Bash.
 */
 func BashEval(cmd interface{}, args ...interface{}) string {
 	out, _, _ := BashWithStdout(cmd, args...)
@@ -140,7 +142,7 @@ func BashEval(cmd interface{}, args ...interface{}) string {
 }
 
 /*
-Similar to os.Getwd() but no error returned.
+Pwd is similar to os.Getwd() without error returned.
 */
 func Pwd() string {
 	pwd, _ := os.Getwd()
@@ -153,7 +155,7 @@ DefExitCode is the default exit code.
 var DefExitCode = 1
 
 /*
-Fatalf print a message and exit the program with DefExitCode.
+Fatalf prints a message and let the program exit with DefExitCode.
 */
 func Fatalf(msg interface{}, args ...interface{}) {
 	fmt.Fprintln(os.Stderr, S(msg, args...))
@@ -161,21 +163,21 @@ func Fatalf(msg interface{}, args ...interface{}) {
 }
 
 /*
-Eprintf is similar to fmt.Printf but output is stderr.
+Eprintf is similar to fmt.Printf but the output is stderr.
 */
 func Eprintf(format interface{}, args ...interface{}) {
 	fmt.Fprint(os.Stderr, S(format, args...))
 }
 
 /*
-Eprint is similar to fmt.Print but output is stderr.
+Eprint is similar to fmt.Print but the output is stderr.
 */
 func Eprint(args ...interface{}) {
 	fmt.Fprint(os.Stderr, args...)
 }
 
 /*
-Eprintln is similar to fmt.Println but output is stderr.
+Eprintln is similar to fmt.Println but the output is stderr.
 */
 func Eprintln(args ...interface{}) {
 	fmt.Fprintln(os.Stderr, args...)
@@ -189,7 +191,7 @@ func Eprintfln(format interface{}, args ...interface{}) {
 }
 
 /*
-Printfln is similar to Eprintf but with a trailing new-line printed
+Printfln is similar to fmt.Printf but with a trailing new-line printed
 */
 func Printfln(format interface{}, args ...interface{}) {
 	fmt.Println(S(format, args...))
