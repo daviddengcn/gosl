@@ -1,4 +1,4 @@
-gosl
+gosl [![GoSearch](http://go-search.org/badge?id=github.com%2Fdaviddengcn%2Fgosl)](http://go-search.org/view?id=github.com%2Fdaviddengcn%2Fgosl)
 ====
 
 This is an application that can make you write script with Go languages.
