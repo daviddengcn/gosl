@@ -46,9 +46,15 @@ go get github.com/daviddengcn/gosl
 go install github.com/daviddengcn/gosl
 ```
 
-#### Link to `/bin`
+#### (Optional) Link to `/bin`
 ```bash
 sudo ln -s $GOPATH/bin/gosl /bin/gosl
+```
+
+If you don't want to do this, the interpreter line can be like this, assuming `$GOPATH/bin` is in your `$PATH`:
+
+```bash
+#!/usr/bin/env gosl
 ```
 
 #### Run a script
@@ -69,10 +75,10 @@ The following packages are pre-imported with `.`, i.e. you can directly use the 
 
 `fmt`, `os`, `strings`, `strconv`, `math`, `time`, and `github.com/daviddengcn/gosl/builtin`
 
-Frequently Used Builtin Functions
+Frequently Used `builtin` Functions
 ---------------------------------
 
-Method | Description | Examples
+Method | Description | Example
 --------|------------|-----------------------
 `S`     | Convert anything to a `string` | `S(1234) == "123"`
 `I`     | Convert anything to an `int`   | `I("1234") == 1234`
