@@ -8,6 +8,7 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"flag"
 	"io/ioutil"
 	"math"
 	"math/rand"
@@ -73,8 +74,13 @@ func appendInitAndMainHead(code *bytes.Buffer) {
 	code.WriteString("func main() { ")
 }
 
-func process() error {
-	fn := villa.Path(os.Args[1])
+type Options struct {
+	ShowSource bool
+	NoClean bool
+}
+
+func Process(gf string, opts Options) error {
+	fn := villa.Path(gf)
 	buffer, err := ioutil.ReadFile(fn.S())
 	if err != nil {
 		return err
@@ -140,12 +146,18 @@ func process() error {
 	}
 
 	code.WriteString("\n}\n")
+	
+	if opts.ShowSource {
+		fmt.Println(string(code.Bytes()))
+	}
 
 	codeFn := genFilename(fn.Base())
 	if err := codeFn.WriteFile(code.Bytes(), 0644); err != nil {
 		return err
 	}
-	defer codeFn.Remove()
+	if !opts.NoClean {
+		defer codeFn.Remove()
+	}
 
 	exeFn := codeFn + ".exe" // to be compatible with Windows
 
@@ -156,7 +168,9 @@ func process() error {
 	if err := cmd.Run(); err != nil {
 		return err
 	}
-	defer exeFn.Remove()
+	if !opts.NoClean {
+		defer exeFn.Remove()
+	}
 
 	if p, err := filepath.Abs(os.Args[1]); err == nil {
 		os.Args[1] = p
@@ -174,11 +188,17 @@ func process() error {
 }
 
 func main() {
-	if len(os.Args) < 2 {
+	var opts Options
+	flag.BoolVar(&opts.ShowSource, "showsource", false, "Show generated source code")
+	flag.BoolVar(&opts.NoClean, "noclean", false, "No cleaning of generated files")
+	
+	flag.Parse()
+	
+	if len(flag.Args()) < 1 {
 		return
 	}
 
-	if err := process(); err != nil {
+	if err := Process(flag.Args()[0], opts); err != nil {
 		fmt.Printf("Failed: %v\n", err)
 		os.Exit(-1)
 	}
