@@ -13,6 +13,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"regexp"
 	"sort"
 	"strconv"
 	"strings"
@@ -274,4 +275,11 @@ func IsFile(p interface{}, args ...interface{}) bool {
 		return false
 	}
 	return !info.Mode().IsDir()
+}
+
+/*
+Match use regular expression pattern to match str and returns all capturing groups.
+*/
+func Match(str interface{}, pattern interface{}) []string {
+	return regexp.MustCompile(S(pattern)).FindStringSubmatch(S(str))
 }

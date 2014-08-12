@@ -71,3 +71,10 @@ func TestIsDirFile(t *testing.T) {
 		assert.Equals(t, "IsFile(tmpDir/file)", IsFile(fn), true)
 	}
 }
+
+func TestMatch(t *testing.T) {
+	assert.LinesEqual(t, "Match", Match("AAAabc123efgFFF", "[a-z]+([0-9]+)[a-z]+"), []string{
+		"abc123efg",
+		"123",
+	})
+}
