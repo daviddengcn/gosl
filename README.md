@@ -1,9 +1,9 @@
 gosl [![GoSearch](http://go-search.org/badge?id=github.com%2Fdaviddengcn%2Fgosl)](http://go-search.org/view?id=github.com%2Fdaviddengcn%2Fgosl)
 ====
 
-This is an application that can make you write script with Go languages.
+This is an application that can make you write script with the Go language.
 
-It is *NOT* an interpreter but the pure Go. The preprocessor tranforms the script into a Go program, instantly compile and run. So it is almost same as the standard Go with the same efficiency.
+It is *NOT* an interpreter but the pure Go. The preprocessor tranforms the script into a Go program, instantly compiles and runs. So it is almost same as the standard Go with the same efficiency.
 
 Benefit
 -------
