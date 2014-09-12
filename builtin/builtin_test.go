@@ -32,6 +32,10 @@ func TestMustSucc(t *testing.T) {
 	MustSucc(nil, 1)
 }
 
+func TestSucc(t *testing.T) {
+	assert.Equals(t, "Succ(nil, 0)", Succ(nil, 0), true)
+}
+
 func TestSortF(t *testing.T) {
 	ints := []int{3, 4, 1, 7, 0}
 	SortF(len(ints), func(i, j int) bool {

@@ -199,6 +199,13 @@ func Printfln(format interface{}, args ...interface{}) {
 }
 
 /*
+Succ check whether return values of Exec and friends means succeed.
+*/
+func Succ(err error, code int) bool {
+	return err == nil
+}
+
+/*
 MustSucc checks the result of Exec/Bash. If not succeed, exit the application.
 */
 func MustSucc(err error, code int) {
