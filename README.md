@@ -14,7 +14,7 @@ Benefit
 
 Example
 -------
-
+* Simple
 ```go
 #!/bin/gosl
 
@@ -34,8 +34,8 @@ files := BashEval("ls -l %s", "/tmp/")
 Println(toJson(Split(files, "\n")))
     
 ```
-
-[Go Search](http://go-search.org/) is now operating with gosl. So you can find some good examples at: https://github.com/daviddengcn/gcse/tree/master/scripts
+* [Go Search](http://go-search.org/) is now operating with gosl. So you can find some good examples at: https://github.com/daviddengcn/gcse/tree/master/scripts
+* [go-diff](http://github.com/daviddengcn/go-diff) also provides scripts in gosl: https://github.com/daviddengcn/go-diff/tree/master/scripts
 
 Installation and Usage
 ----------------------
