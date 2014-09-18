@@ -253,6 +253,13 @@ func ScriptDir() string {
 }
 
 /*
+ScriptName returns the filename of the current script not including the path.
+*/
+func ScriptName() string {
+	return path.Base(os.Args[0])
+}
+
+/*
 Exists checks whether the path exists
 */
 func Exists(p interface{}, args ...interface{}) bool {
