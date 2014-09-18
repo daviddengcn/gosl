@@ -82,3 +82,9 @@ func TestMatch(t *testing.T) {
 		"123",
 	})
 }
+
+func TestDryRun(t *testing.T) {
+	DryRun = true
+	Bash("ls -l")
+	Exec("myapp", "arg1", "arg2")
+}

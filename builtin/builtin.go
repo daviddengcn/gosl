@@ -85,7 +85,7 @@ Stdout/stderr are directed to the current stdout/stderr.
 */
 func Exec(exe interface{}, args ...string) (error, int) {
 	if DryRun {
-		Eprintfln("Exec: %v %v", exe, S2Is(args...))
+		Eprintfln("Exec: %v %s", exe, strings.Join(args, " "))
 		return nil, 0
 	}
 	cmd := exec.Command(S(exe), args...)
@@ -102,7 +102,7 @@ the first return value.
 */
 func ExecWithStdout(exe interface{}, args ...string) (stdout string, err error, errCode int) {
 	if DryRun {
-		Eprintfln("ExecWithStdout: %v %v", exe, S2Is(args...))
+		Eprintfln("ExecWithStdout: %v %s", exe, strings.Join(args, " "))
 		return "", nil, 0
 	}
 	var stdoutBuf bytes.Buffer
@@ -122,7 +122,7 @@ returned as the first/second return values.
 */
 func ExecWithStdErrOut(exe interface{}, args ...string) (stdout, stderr string, err error, errCode int) {
 	if DryRun {
-		Eprintfln("ExecWithStdErrOut: %v %v", exe, S2Is(args...))
+		Eprintfln("ExecWithStdErrOut: %v %s", exe, strings.Join(args, " "))
 		return "", "", nil, 0
 	}
 	var stdoutBuf, stderrBuf bytes.Buffer
