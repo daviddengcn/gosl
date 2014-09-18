@@ -20,12 +20,28 @@ import (
 	"syscall"
 )
 
+var (
+	// Set DryRun to true will make all Exec related functions in dry run mode, i.e. they only print the command to run.
+	DryRun = false
+)
+
 /*
 S converts anything into a string. If args is specified, v is used as a format
 string.
 */
 func S(v interface{}, args ...interface{}) string {
 	return fmt.Sprintf(fmt.Sprint(v), args...)
+}
+
+/*
+S2Is returns a slice of interface{} given strings.
+*/
+func S2Is(args ...string) (ifs []interface{}) {
+	ifs = make([]interface{}, len(args))
+	for i, arg := range args {
+		ifs[i] = arg
+	}
+	return
 }
 
 /*
@@ -68,6 +84,10 @@ NOTE the error code could be 0 with a non-nil error.
 Stdout/stderr are directed to the current stdout/stderr.
 */
 func Exec(exe interface{}, args ...string) (error, int) {
+	if DryRun {
+		Eprintfln("Exec: " + S(exe), S2Is(args...)...)
+		return nil, 0
+	}
 	cmd := exec.Command(S(exe), args...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
@@ -81,6 +101,10 @@ ExecWithStdout is similar to Exec but the stdout is captured and returned as
 the first return value.
 */
 func ExecWithStdout(exe interface{}, args ...string) (stdout string, err error, errCode int) {
+	if DryRun {
+		Eprintfln("ExecWithStdout" + S(exe), S2Is(args...)...)
+		return "", nil, 0
+	}
 	var stdoutBuf bytes.Buffer
 
 	cmd := exec.Command(S(exe), args...)
@@ -97,6 +121,10 @@ ExecWithStdout is similar to Exec but the stdout/stderr are captured and
 returned as the first/second return values.
 */
 func ExecWithStdErrOut(exe interface{}, args ...string) (stdout, stderr string, err error, errCode int) {
+	if DryRun {
+		Eprintfln("ExecWithStdErrOut" + S(exe), S2Is(args...)...)
+		return "", "", nil, 0
+	}
 	var stdoutBuf, stderrBuf bytes.Buffer
 
 	cmd := exec.Command(S(exe), args...)
