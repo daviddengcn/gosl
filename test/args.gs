@@ -1,0 +1,3 @@
+#!/bin/gosl
+
+Println(Args)

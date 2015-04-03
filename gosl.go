@@ -1,7 +1,8 @@
 /*
 This is an application that can make you write script with Go languages.
 
-It is NOT an interpreter but the pure Go. The preprocessor tranforms the script into a Go program, instantly compile and run. So it is almost same as the standard Go with the same efficiency.
+It is NOT an interpreter but the pure Go. The preprocessor tranforms the script into a Go program,
+instantly compile and run. So it is almost same as the standard Go with the same efficiency.
 */
 package main
 
@@ -14,7 +15,6 @@ import (
 	"math/rand"
 	"os"
 	"os/exec"
-	"path/filepath"
 	"strings"
 	"syscall"
 
@@ -79,13 +79,7 @@ type Options struct {
 	NoClean bool
 }
 
-func Process(gf string, opts Options) error {
-	fn := villa.Path(gf)
-	buffer, err := ioutil.ReadFile(fn.S())
-	if err != nil {
-		return err
-	}
-
+func Process(buf []byte, fn villa.Path, args []string, opts Options) error {
 	var code bytes.Buffer
 	code.WriteString(`package main;`)
 	for i := 0; i < len(DEFAULT_IMPORT); i += 2 {
@@ -96,7 +90,6 @@ func Process(gf string, opts Options) error {
 
 	stage := STAGE_READY
 
-	buf := buffer
 	for len(buf) > 0 {
 		p := bytes.IndexByte(buf, byte('\n'))
 		var line []byte
@@ -151,6 +144,7 @@ func Process(gf string, opts Options) error {
 		fmt.Println(string(code.Bytes()))
 	}
 
+	// put the path of the script as Args[1] in the generated program
 	codeFn := genFilename(fn.Base())
 	if err := codeFn.WriteFile(code.Bytes(), 0644); err != nil {
 		return err
@@ -172,14 +166,16 @@ func Process(gf string, opts Options) error {
 		defer exeFn.Remove()
 	}
 
-	if p, err := filepath.Abs(os.Args[1]); err == nil {
-		os.Args[1] = p
+	if p, err := fn.Abs(); err == nil {
+		args = append([]string{p.S()}, args...)
+	} else {
+		args = append([]string{fn.S()}, args...)
 	}
-	cmd = exeFn.Command(os.Args[1:]...)
+	cmd = exeFn.Command(args...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin
-	err = cmd.Run()
+	err := cmd.Run()
 	ec := execCode(err)
 	if ec != 0 {
 		os.Exit(ec)
@@ -191,14 +187,35 @@ func main() {
 	var opts Options
 	flag.BoolVar(&opts.ShowSource, "showsource", false, "Show generated source code")
 	flag.BoolVar(&opts.NoClean, "noclean", false, "No cleaning of generated files")
+	pSrcStr := flag.String("src", "", "Source code")
 	
 	flag.Parse()
 	
-	if len(flag.Args()) < 1 {
-		return
+	var src []byte
+	fn := villa.Path("noname")
+	args := flag.Args()
+	
+	if *pSrcStr != "" {
+		src = []byte(*pSrcStr)
+	} else if len(flag.Args()) == 0 {
+		var err error
+		src, err = ioutil.ReadAll(os.Stdin)
+		if err != nil {
+			fmt.Printf("Failed: %v\n", err)
+			os.Exit(-1)
+		}
+	} else {
+		fn, args = villa.Path(flag.Args()[0]), flag.Args()[1:]
+		var err error
+		src, err = ioutil.ReadFile(fn.S())
+		if err != nil {
+			fmt.Printf("Failed: %v\n", err)
+			os.Exit(-1)
+		}
 	}
 
-	if err := Process(flag.Args()[0], opts); err != nil {
+	
+	if err := Process(src, fn, args, opts); err != nil {
 		fmt.Printf("Failed: %v\n", err)
 		os.Exit(-1)
 	}
