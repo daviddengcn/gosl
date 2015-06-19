@@ -60,13 +60,13 @@ If you don't want to do this, the interpreter line can be like this, assuming `$
 #### Run a script
 If a script starts with the bash interpreter line: `#!/bin/gosl`. You can run it like this
 ```bash
-chmod a+x example.go
-./example.go [params...]
+chmod a+x example.gs
+./example.gs [params...]
 ```
 
 Or you can explictly call `gosl` to run it:
 ```bash
-gosl example.go [params...]
+gosl example.gs [params...]
 ```
 
 Pre-imported Packages
