@@ -8,8 +8,8 @@ package main
 
 import (
 	"bytes"
-	"fmt"
 	"flag"
+	"fmt"
 	"io/ioutil"
 	"math"
 	"math/rand"
@@ -17,6 +17,8 @@ import (
 	"os/exec"
 	"strings"
 	"syscall"
+
+	"github.com/golangplus/fmt"
 
 	"github.com/daviddengcn/go-villa"
 )
@@ -76,7 +78,7 @@ func appendInitAndMainHead(code *bytes.Buffer) {
 
 type Options struct {
 	ShowSource bool
-	NoClean bool
+	NoClean    bool
 }
 
 func Process(buf []byte, fn villa.Path, args []string, opts Options) error {
@@ -139,7 +141,7 @@ func Process(buf []byte, fn villa.Path, args []string, opts Options) error {
 	}
 
 	code.WriteString("\n}\n")
-	
+
 	if opts.ShowSource {
 		fmt.Println(string(code.Bytes()))
 	}
@@ -188,20 +190,20 @@ func main() {
 	flag.BoolVar(&opts.ShowSource, "showsource", false, "Show generated source code")
 	flag.BoolVar(&opts.NoClean, "noclean", false, "No cleaning of generated files")
 	pSrcStr := flag.String("src", "", "Source code")
-	
+
 	flag.Parse()
-	
+
 	var src []byte
 	fn := villa.Path("noname")
 	args := flag.Args()
-	
+
 	if *pSrcStr != "" {
 		src = []byte(*pSrcStr)
 	} else if len(flag.Args()) == 0 {
 		var err error
 		src, err = ioutil.ReadAll(os.Stdin)
 		if err != nil {
-			fmt.Printf("Failed: %v\n", err)
+			fmtp.Printfln("Failed: %v", err)
 			os.Exit(-1)
 		}
 	} else {
@@ -209,14 +211,13 @@ func main() {
 		var err error
 		src, err = ioutil.ReadFile(fn.S())
 		if err != nil {
-			fmt.Printf("Failed: %v\n", err)
+			fmtp.Eprintfln("Failed: %v", err)
 			os.Exit(-1)
 		}
 	}
 
-	
 	if err := Process(src, fn, args, opts); err != nil {
-		fmt.Printf("Failed: %v\n", err)
+		fmtp.Eprintfln("Failed: %v", err)
 		os.Exit(-1)
 	}
 }
